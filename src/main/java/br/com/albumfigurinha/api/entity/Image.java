@@ -20,9 +20,6 @@ import java.sql.Types;
 @Table(name = "images")
 public class Image {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.UUID)
-//    private String id;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)

@@ -5,6 +5,7 @@ import br.com.albumfigurinha.api.dto.JwtDTO;
 import br.com.albumfigurinha.api.dto.SignInDTO;
 import br.com.albumfigurinha.api.entity.User;
 
+import br.com.albumfigurinha.api.exception.AuthenticationErrorException;
 import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,15 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<JwtDTO> signIn(@RequestBody SignInDTO data) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.getUsername(), data.getPassword());
-        var authUser = authenticationManager.authenticate(usernamePassword);
-        var accessToken = tokenService.generateAccessToken((User) authUser.getPrincipal());
-        JwtDTO accessTokenDTO = new JwtDTO(accessToken);
-        return ResponseEntity.ok(accessTokenDTO);
+        try {
+            var usernamePassword = new UsernamePasswordAuthenticationToken(data.getUsername(), data.getPassword());
+            var authUser = authenticationManager.authenticate(usernamePassword);
+            var accessToken = tokenService.generateAccessToken((User) authUser.getPrincipal());
+            JwtDTO accessTokenDTO = new JwtDTO(accessToken);
+            return ResponseEntity.ok(accessTokenDTO);
+        } catch (Exception exception) {
+            throw new AuthenticationErrorException("User not found and/or invalid password");
+        }
     }
 }
 

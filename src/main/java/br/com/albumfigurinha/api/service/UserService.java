@@ -18,5 +18,7 @@ public interface UserService {
 
     UserDTO updateUser(UserCreationDTO userDTO, String userId);
 
+    UserDTO resetPasswordByUserId(String userId);
+
     void deleteUser(String userId);
 }

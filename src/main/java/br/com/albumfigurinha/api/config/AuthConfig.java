@@ -4,7 +4,6 @@ import br.com.albumfigurinha.api.config.auth.SecurityFilter;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,8 +34,9 @@ public class AuthConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/users").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/api/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/users/*").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -30,7 +30,7 @@ public class ImageServiceImpl implements ImageService {
 
     private final ImageMapper imageMapper;
 
-    public ImageDTO uploadImage(MultipartFile imageFile) throws IOException {
+    public Image uploadImage(MultipartFile imageFile) throws IOException {
         if (imageFile.isEmpty()) {
             throw new InvalidImageException("The image file is empty");
         }
@@ -61,13 +61,20 @@ public class ImageServiceImpl implements ImageService {
         }
         imageToSave.setMd5(checksum);
         imageRepository.save(imageToSave);
-        return imageMapper.toDto(imageToSave);
+        return imageToSave;
+    }
+
+    public boolean imageExists(String md5) {
+        Optional<Image> dbImage = imageRepository.findByMd5(md5);
+        return dbImage.isPresent();
     }
 
 
     public byte[] downloadImage(String hashMd5) {
         Optional<Image> dbImage = imageRepository.findByMd5(hashMd5);
-
+        if (!dbImage.isPresent()) {
+            throw new InvalidImageException("Image not found with the given hash Md5: { " + hashMd5 + " }");
+        }
         return dbImage.map(image -> {
             try {
                 return ImageUtils.decompressImage(image.getImageData());
@@ -77,6 +84,16 @@ public class ImageServiceImpl implements ImageService {
                         .addContextValue("Image name", image.getName());
             }
         }).orElse(null);
+    }
+
+    public void removeImage(String hashMd5) {
+
+        Optional<Image> dbImage = imageRepository.findByMd5(hashMd5);
+        if (!dbImage.isPresent()) {
+            throw new InvalidImageException("Image not found with the given hash Md5: { " + hashMd5 + " }");
+        }
+
+        imageRepository.delete(dbImage.get());
     }
 
 }

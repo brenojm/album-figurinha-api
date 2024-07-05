@@ -2,6 +2,7 @@ package br.com.albumfigurinha.api.controller;
 
 import br.com.albumfigurinha.api.dto.ImageDTO;
 import br.com.albumfigurinha.api.entity.Image;
+import br.com.albumfigurinha.api.mapper.ImageMapper;
 import br.com.albumfigurinha.api.service.ImageService;
 
 import lombok.AllArgsConstructor;
@@ -23,11 +24,12 @@ import java.io.IOException;
 public class ImageController {
 
     private final ImageService imageService;
+    private final ImageMapper imageMapper;
 
     @PostMapping
     public ResponseEntity<ImageDTO> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-        ImageDTO image = imageService.uploadImage(file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(image);
+        Image image = imageService.uploadImage(file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(imageMapper.toDto(image));
     }
 
     @GetMapping("/{hashMd5}")

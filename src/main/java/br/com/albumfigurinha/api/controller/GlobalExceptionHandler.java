@@ -1,6 +1,7 @@
 package br.com.albumfigurinha.api.controller;
 
 import br.com.albumfigurinha.api.dto.ErrorDTO;
+import br.com.albumfigurinha.api.exception.AuthenticationErrorException;
 import br.com.albumfigurinha.api.exception.InvalidImageException;
 import br.com.albumfigurinha.api.exception.UserAlreadyExistsException;
 import br.com.albumfigurinha.api.exception.UserNotFoundException;
@@ -48,7 +49,12 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorDTO("Authentication failed. User not found or invalid credentials."));
     }
-
+    @ExceptionHandler({AuthenticationErrorException.class})
+    public ResponseEntity<Object> handleAuthenticationErrorException(AuthenticationErrorException exception) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ErrorDTO(exception.getMessage()));
+    }
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<Object> handleRuntimeException(RuntimeException exception) {
         return ResponseEntity

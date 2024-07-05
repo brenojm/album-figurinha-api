@@ -31,7 +31,8 @@ public class TokenProvider {
             return JWT.create()
                     .withSubject(user.getUsername())
                     .withClaim("username", user.getUsername())
-                    .withClaim("roles", user.getRole().toString())
+                    .withClaim("role", user.getRole().toString())
+                    .withClaim("id", user.getId())
                     .withExpiresAt(genAccessExpirationDate())
                     .sign(algorithm);
 
